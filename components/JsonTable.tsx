@@ -1,8 +1,17 @@
+'use client';
+
+import { useState } from 'react';
+
 interface JsonTableProps {
   data: any;
 }
 
+type SortDirection = 'asc' | 'desc' | null;
+
 export default function JsonTable({ data }: JsonTableProps) {
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
+
   // Handle different data types
   if (data === null || data === undefined) {
     return <div className="text-gray-500">データがありません</div>;
@@ -45,6 +54,73 @@ export default function JsonTable({ data }: JsonTableProps) {
     return String(value);
   };
 
+  // Get raw value for sorting
+  const getRawValue = (item: any, column: string): any => {
+    if (typeof item === 'object' && item !== null) {
+      return item[column];
+    }
+    return item;
+  };
+
+  // Handle column header click for sorting
+  const handleSort = (column: string) => {
+    if (sortColumn === column) {
+      // Cycle through: asc -> desc -> null
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        setSortDirection(null);
+        setSortColumn(null);
+      }
+    } else {
+      // New column, start with ascending
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
+  // Sort the data array
+  const sortedDataArray = [...dataArray];
+  if (sortColumn && sortDirection) {
+    sortedDataArray.sort((a, b) => {
+      const aVal = getRawValue(a, sortColumn);
+      const bVal = getRawValue(b, sortColumn);
+
+      // Handle null/undefined values
+      if (aVal === null || aVal === undefined) return 1;
+      if (bVal === null || bVal === undefined) return -1;
+
+      // Compare values
+      let comparison = 0;
+      if (typeof aVal === 'number' && typeof bVal === 'number') {
+        comparison = aVal - bVal;
+      } else if (typeof aVal === 'string' && typeof bVal === 'string') {
+        comparison = aVal.localeCompare(bVal);
+      } else {
+        // Convert to string for comparison
+        const aStr = String(aVal);
+        const bStr = String(bVal);
+        comparison = aStr.localeCompare(bStr);
+      }
+
+      return sortDirection === 'asc' ? comparison : -comparison;
+    });
+  }
+
+  // Render sort indicator
+  const renderSortIndicator = (column: string) => {
+    if (sortColumn !== column) {
+      return <span className="ml-1 text-gray-400">⇅</span>;
+    }
+    if (sortDirection === 'asc') {
+      return <span className="ml-1">▲</span>;
+    }
+    if (sortDirection === 'desc') {
+      return <span className="ml-1">▼</span>;
+    }
+    return null;
+  };
+
   return (
     <div className="overflow-auto">
       <table className="min-w-full border-collapse border border-gray-300">
@@ -53,15 +129,17 @@ export default function JsonTable({ data }: JsonTableProps) {
             {columns.map((column) => (
               <th
                 key={column}
-                className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-700"
+                onClick={() => handleSort(column)}
+                className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-700 cursor-pointer hover:bg-gray-200 select-none"
               >
                 {column}
+                {renderSortIndicator(column)}
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {dataArray.map((item, rowIndex) => (
+          {sortedDataArray.map((item, rowIndex) => (
             <tr
               key={rowIndex}
               className={rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
