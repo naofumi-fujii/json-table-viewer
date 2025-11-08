@@ -74,11 +74,11 @@ export default function Home() {
         {isInputVisible ? (
           <div className="h-full p-4 flex flex-col">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">JSON入力</h2>
+              <h2 className="text-xl font-bold">JSON Input</h2>
               <button
                 onClick={() => setIsInputVisible(false)}
                 className="w-10 h-10 flex items-center justify-center bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                aria-label="JSON入力を隠す"
+                aria-label="Hide JSON input"
               >
                 <span className="text-xl">←</span>
               </button>
@@ -86,7 +86,7 @@ export default function Home() {
             <textarea
               value={jsonInput}
               onChange={handleJsonChange}
-              placeholder='JSONを貼り付けてください&#10;例:&#10;[&#10;  {"name": "太郎", "age": 25, "city": "東京"},&#10;  {"name": "花子", "age": 30, "city": "大阪"}&#10;]'
+              placeholder='Paste JSON here&#10;Example:&#10;[&#10;  {"name": "John", "age": 25, "city": "Tokyo"},&#10;  {"name": "Jane", "age": 30, "city": "Osaka"}&#10;]'
               className="flex-1 w-full p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {error && (
@@ -98,7 +98,7 @@ export default function Home() {
             <button
               onClick={() => setIsInputVisible(true)}
               className="w-8 h-16 flex items-center justify-center bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-              aria-label="JSON入力を表示"
+              aria-label="Show JSON input"
             >
               <span className="text-xl">→</span>
             </button>
@@ -122,10 +122,10 @@ export default function Home() {
         <div className="h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold">
-              テーブル表示
+              Table View
               {parsedData && (
                 <span className="ml-3 text-base font-normal text-gray-600">
-                  ({Array.isArray(parsedData) ? parsedData.length : 1}件)
+                  ({Array.isArray(parsedData) ? parsedData.length : 1} {Array.isArray(parsedData) && parsedData.length !== 1 ? 'items' : 'item'})
                 </span>
               )}
             </h2>
@@ -134,7 +134,7 @@ export default function Home() {
             <JsonTable data={parsedData} />
           ) : (
             <div className="flex items-center justify-center h-full text-gray-400">
-              {isInputVisible ? '左側にJSONを入力すると、ここにテーブルが表示されます' : 'JSON入力エリアを表示してJSONを入力してください'}
+              {isInputVisible ? 'Enter JSON on the left to display the table here' : 'Show the JSON input area and enter JSON'}
             </div>
           )}
         </div>

@@ -14,7 +14,7 @@ export default function JsonTable({ data }: JsonTableProps) {
 
   // Handle different data types
   if (data === null || data === undefined) {
-    return <div className="text-gray-500">データがありません</div>;
+    return <div className="text-gray-500">No data available</div>;
   }
 
   // If data is not an array, wrap it in an array
@@ -22,7 +22,7 @@ export default function JsonTable({ data }: JsonTableProps) {
 
   // If array is empty
   if (dataArray.length === 0) {
-    return <div className="text-gray-500">データが空です</div>;
+    return <div className="text-gray-500">Data is empty</div>;
   }
 
   // Extract all unique keys from all objects
