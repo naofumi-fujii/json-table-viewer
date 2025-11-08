@@ -121,7 +121,14 @@ export default function Home() {
       <div className="flex-1 p-4 overflow-auto">
         <div className="h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">テーブル表示</h2>
+            <h2 className="text-xl font-bold">
+              テーブル表示
+              {parsedData && (
+                <span className="ml-3 text-base font-normal text-gray-600">
+                  ({Array.isArray(parsedData) ? parsedData.length : 1}件)
+                </span>
+              )}
+            </h2>
           </div>
           {parsedData ? (
             <JsonTable data={parsedData} />
