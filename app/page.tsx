@@ -1,6 +1,15 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
+import {
+  Box,
+  Flex,
+  Textarea,
+  Heading,
+  Text,
+  IconButton,
+} from '@chakra-ui/react';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import JsonTable from '@/components/JsonTable';
 
 export default function Home() {
@@ -65,80 +74,89 @@ export default function Home() {
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
   return (
-    <div ref={containerRef} className="flex h-screen">
+    <Flex ref={containerRef} h="100vh">
       {/* Left side - JSON input (collapsed to narrow strip when hidden) */}
-      <div
-        style={{ width: isInputVisible ? `${leftWidth}%` : '2rem' }}
-        className="flex-shrink-0 transition-all duration-300 ease-in-out"
+      <Box
+        w={isInputVisible ? `${leftWidth}%` : '2rem'}
+        flexShrink={0}
+        transition="all 0.3s ease-in-out"
       >
         {isInputVisible ? (
-          <div className="h-full p-4 flex flex-col">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">JSON Input</h2>
-              <button
+          <Flex h="full" p={4} direction="column">
+            <Flex align="center" justify="space-between" mb={4}>
+              <Heading size="lg">JSON Input</Heading>
+              <IconButton
                 onClick={() => setIsInputVisible(false)}
-                className="w-10 h-10 flex items-center justify-center bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 aria-label="Hide JSON input"
+                colorScheme="blue"
+                size="md"
               >
-                <span className="text-xl">←</span>
-              </button>
-            </div>
-            <textarea
+                <FaChevronLeft />
+              </IconButton>
+            </Flex>
+            <Textarea
               value={jsonInput}
               onChange={handleJsonChange}
               placeholder='Paste JSON here&#10;Example:&#10;[&#10;  {"name": "John", "age": 25, "city": "Tokyo"},&#10;  {"name": "Jane", "age": 30, "city": "Osaka"}&#10;]'
-              className="flex-1 w-full p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+              flex={1}
+              fontFamily="mono"
+              fontSize="sm"
+              resize="none"
             />
             {error && (
-              <div className="mt-2 text-red-600 text-sm">{error}</div>
+              <Text mt={2} color="red.600" fontSize="sm">{error}</Text>
             )}
-          </div>
+          </Flex>
         ) : (
-          <div className="h-full flex items-center justify-center bg-gray-100 border-r border-gray-300">
-            <button
+          <Flex h="full" align="center" justify="center" bg="gray.100" borderRight="1px" borderColor="gray.300">
+            <IconButton
               onClick={() => setIsInputVisible(true)}
-              className="w-8 h-16 flex items-center justify-center bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               aria-label="Show JSON input"
+              colorScheme="blue"
+              size="md"
+              h={16}
             >
-              <span className="text-xl">→</span>
-            </button>
-          </div>
+              <FaChevronRight />
+            </IconButton>
+          </Flex>
         )}
-      </div>
+      </Box>
 
       {/* Resize handle - only visible when input is visible */}
       {isInputVisible && (
-        <div
+        <Box
           onMouseDown={handleMouseDown}
-          className={`w-1 bg-gray-300 hover:bg-blue-500 cursor-col-resize flex-shrink-0 ${
-            isDragging ? 'bg-blue-500' : ''
-          }`}
-          style={{ userSelect: 'none' }}
+          w="4px"
+          bg={isDragging ? 'blue.500' : 'gray.300'}
+          _hover={{ bg: 'blue.500' }}
+          cursor="col-resize"
+          flexShrink={0}
+          userSelect="none"
         />
       )}
 
       {/* Right side - Table display */}
-      <div className="flex-1 p-4 overflow-auto">
-        <div className="h-full flex flex-col">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">
+      <Box flex={1} p={4} overflow="auto">
+        <Flex h="full" direction="column">
+          <Flex align="center" justify="space-between" mb={4}>
+            <Heading size="lg">
               Table View
               {parsedData !== null && (
-                <span className="ml-3 text-base font-normal text-gray-600">
+                <Text as="span" ml={3} fontSize="md" fontWeight="normal" color="gray.600">
                   ({Array.isArray(parsedData) ? parsedData.length : 1} {Array.isArray(parsedData) && parsedData.length !== 1 ? 'items' : 'item'})
-                </span>
+                </Text>
               )}
-            </h2>
-          </div>
+            </Heading>
+          </Flex>
           {parsedData ? (
             <JsonTable data={parsedData} />
           ) : (
-            <div className="flex items-center justify-center h-full text-gray-400">
+            <Flex align="center" justify="center" h="full" color="gray.400">
               {isInputVisible ? 'Enter JSON on the left to display the table here' : 'Show the JSON input area and enter JSON'}
-            </div>
+            </Flex>
           )}
-        </div>
-      </div>
-    </div>
+        </Flex>
+      </Box>
+    </Flex>
   );
 }

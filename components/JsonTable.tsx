@@ -1,6 +1,16 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import {
+  Box,
+  Button,
+  Flex,
+  Grid,
+  Text,
+  Link,
+  Icon,
+} from '@chakra-ui/react';
+import { FaChevronUp, FaChevronDown, FaCaretUp, FaCaretDown } from 'react-icons/fa';
 
 interface JsonTableProps {
   data: unknown;
@@ -40,12 +50,12 @@ export default function JsonTable({ data }: JsonTableProps) {
 
   // Now handle conditional returns after all hooks
   if (data === null || data === undefined) {
-    return <div className="text-gray-500">No data available</div>;
+    return <Text color="gray.500">No data available</Text>;
   }
 
   // If array is empty
   if (dataArray.length === 0) {
-    return <div className="text-gray-500">Data is empty</div>;
+    return <Text color="gray.500">Data is empty</Text>;
   }
 
   // Toggle column visibility
@@ -72,11 +82,11 @@ export default function JsonTable({ data }: JsonTableProps) {
   // If no keys found, display raw JSON
   if (columns.length === 0) {
     return (
-      <div className="p-4 bg-gray-50 rounded-lg">
-        <pre className="text-sm overflow-auto">
+      <Box p={4} bg="gray.50" borderRadius="lg">
+        <Text as="pre" fontSize="sm" overflow="auto">
           {JSON.stringify(data, null, 2)}
-        </pre>
-      </div>
+        </Text>
+      </Box>
     );
   }
 
@@ -100,15 +110,17 @@ export default function JsonTable({ data }: JsonTableProps) {
     // Check if value is a URL
     if (isURL(value)) {
       return (
-        <a
+        <Link
           href={String(value)}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 hover:text-blue-800 underline"
+          color="blue.600"
+          _hover={{ color: 'blue.800' }}
+          textDecoration="underline"
           onClick={(e) => e.stopPropagation()}
         >
           {String(value)}
-        </a>
+        </Link>
       );
     }
 
@@ -182,130 +194,155 @@ export default function JsonTable({ data }: JsonTableProps) {
   // Render sort indicator
   const renderSortIndicator = (column: string) => {
     if (sortColumn !== column) {
-      return <span className="ml-1 text-gray-400">⇅</span>;
+      return <Text as="span" ml={1} color="gray.400">⇅</Text>;
     }
     if (sortDirection === 'asc') {
-      return <span className="ml-1">▲</span>;
+      return <Icon as={FaCaretUp} ml={1} />;
     }
     if (sortDirection === 'desc') {
-      return <span className="ml-1">▼</span>;
+      return <Icon as={FaCaretDown} ml={1} />;
     }
     return null;
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <Flex direction="column" h="full">
       {/* Column visibility settings */}
-      <div className="mb-4">
-        <button
-          onClick={() => setShowColumnSettings(!showColumnSettings)}
-          className="group relative px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
-          title={showColumnSettings ? 'Hide column settings' : 'Show column settings'}
-        >
-          <span className="text-lg">☰</span>
-          <span className="text-base">{visibleColumns.size}/{columns.length}</span>
-          <span className="text-xs">{showColumnSettings ? '▲' : '▼'}</span>
-          {/* Tooltip */}
-          <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-800 text-white text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-            {showColumnSettings ? 'Hide column settings' : 'Show column settings'}
-            <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></span>
-          </span>
-        </button>
+      <Box mb={4}>
+        <Flex gap={2} align="center">
+          <Button
+            onClick={() => setShowColumnSettings(!showColumnSettings)}
+            colorScheme="gray"
+            size="sm"
+            fontWeight="medium"
+            title={showColumnSettings ? 'Hide column settings' : 'Show column settings'}
+          >
+            <Flex align="center" gap={2}>
+              <Text fontSize="lg">☰</Text>
+              <Text fontSize="base">{visibleColumns.size}/{columns.length}</Text>
+              <Icon as={showColumnSettings ? FaChevronUp : FaChevronDown} />
+            </Flex>
+          </Button>
+        </Flex>
 
         {showColumnSettings && (
-          <div className="mt-2 p-4 bg-gray-50 border border-gray-300 rounded-lg">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2 font-semibold text-gray-700">
-                <span className="text-lg">▦</span>
-                <span className="text-sm">{visibleColumns.size}/{columns.length}</span>
-              </div>
-              <div className="flex gap-2">
-                <button
+          <Box mt={2} p={4} bg="gray.50" border="1px" borderColor="gray.300" borderRadius="lg">
+            <Flex align="center" justify="space-between" mb={3}>
+              <Flex align="center" gap={2} fontWeight="semibold" color="gray.700">
+                <Text fontSize="lg">▦</Text>
+                <Text fontSize="sm">{visibleColumns.size}/{columns.length}</Text>
+              </Flex>
+              <Flex gap={2}>
+                <Button
                   onClick={() => toggleAllColumns(true)}
-                  className="group relative w-10 h-10 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+                  colorScheme="blue"
+                  size="sm"
+                  w={10}
+                  h={10}
                   title="Show all columns"
                 >
-                  <span className="text-xl">☑</span>
-                  {/* Tooltip */}
-                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-800 text-white text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                    Show all columns
-                    <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></span>
-                  </span>
-                </button>
-                <button
+                  <Text fontSize="xl">☑</Text>
+                </Button>
+                <Button
                   onClick={() => toggleAllColumns(false)}
-                  className="group relative w-10 h-10 flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                  colorScheme="gray"
+                  size="sm"
+                  w={10}
+                  h={10}
                   title="Hide all columns"
                 >
-                  <span className="text-xl">☐</span>
-                  {/* Tooltip */}
-                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-800 text-white text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                    Hide all columns
-                    <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></span>
-                  </span>
-                </button>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                  <Text fontSize="xl">☐</Text>
+                </Button>
+              </Flex>
+            </Flex>
+            <Grid templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)' }} gap={2}>
               {columns.map((column) => (
-                <label
+                <Box
                   key={column}
-                  className="flex items-center space-x-2 cursor-pointer hover:bg-gray-100 p-2 rounded"
+                  p={2}
+                  _hover={{ bg: 'gray.100' }}
+                  borderRadius="md"
+                  cursor="pointer"
+                  onClick={() => toggleColumn(column)}
                 >
-                  <input
-                    type="checkbox"
-                    checked={!hiddenColumns.has(column)}
-                    onChange={() => toggleColumn(column)}
-                    className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
-                  />
-                  <span className="text-sm text-gray-700">{column}</span>
-                </label>
+                  <Flex align="center" gap={2}>
+                    <input
+                      type="checkbox"
+                      checked={!hiddenColumns.has(column)}
+                      onChange={() => toggleColumn(column)}
+                      style={{ cursor: 'pointer' }}
+                    />
+                    <Text fontSize="sm" color="gray.700">{column}</Text>
+                  </Flex>
+                </Box>
               ))}
-            </div>
-          </div>
+            </Grid>
+          </Box>
         )}
-      </div>
+      </Box>
 
       {/* Table */}
-      <div className="overflow-auto flex-1">
-        <table className="min-w-full border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-gray-100">
-            {displayColumns.map((column) => (
-              <th
-                key={column}
-                onClick={() => handleSort(column)}
-                className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-700 cursor-pointer hover:bg-gray-200 select-none"
-              >
-                {column}
-                {renderSortIndicator(column)}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {sortedDataArray.map((item, rowIndex) => (
-            <tr
-              key={rowIndex}
-              className={rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
-            >
+      <Box overflow="auto" flex={1}>
+        <Box
+          as="table"
+          w="full"
+          borderCollapse="collapse"
+          border="1px"
+          borderColor="gray.300"
+        >
+          <Box as="thead">
+            <Box as="tr" bg="gray.100">
               {displayColumns.map((column) => (
-                <td
+                <Box
+                  as="th"
                   key={column}
-                  className="border border-gray-300 px-4 py-2 text-gray-900"
+                  onClick={() => handleSort(column)}
+                  cursor="pointer"
+                  _hover={{ bg: 'gray.200' }}
+                  userSelect="none"
+                  border="1px"
+                  borderColor="gray.300"
+                  px={4}
+                  py={2}
+                  textAlign="left"
+                  fontWeight="semibold"
+                  color="gray.700"
                 >
-                  {typeof item === 'object' && item !== null
-                    ? renderValue(item[column])
-                    : rowIndex === 0 && column === displayColumns[0]
-                    ? renderValue(item)
-                    : ''}
-                </td>
+                  {column}
+                  {renderSortIndicator(column)}
+                </Box>
               ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      </div>
-    </div>
+            </Box>
+          </Box>
+          <Box as="tbody">
+            {sortedDataArray.map((item, rowIndex) => (
+              <Box
+                as="tr"
+                key={rowIndex}
+                bg={rowIndex % 2 === 0 ? 'white' : 'gray.50'}
+              >
+                {displayColumns.map((column) => (
+                  <Box
+                    as="td"
+                    key={column}
+                    border="1px"
+                    borderColor="gray.300"
+                    px={4}
+                    py={2}
+                    color="gray.900"
+                  >
+                    {typeof item === 'object' && item !== null
+                      ? renderValue(item[column])
+                      : rowIndex === 0 && column === displayColumns[0]
+                      ? renderValue(item)
+                      : ''}
+                  </Box>
+                ))}
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      </Box>
+    </Flex>
   );
 }
