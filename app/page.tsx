@@ -7,7 +7,7 @@ export default function Home() {
   const [jsonInput, setJsonInput] = useState('');
   const [parsedData, setParsedData] = useState<unknown>(null);
   const [error, setError] = useState('');
-  const [leftWidth, setLeftWidth] = useState(50); // Percentage
+  const [leftWidth, setLeftWidth] = useState(25); // Percentage (1:3 ratio)
   const [isDragging, setIsDragging] = useState(false);
   const [isInputVisible, setIsInputVisible] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
