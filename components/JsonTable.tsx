@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 
 interface JsonTableProps {
   data: unknown;
@@ -9,42 +9,48 @@ interface JsonTableProps {
 type SortDirection = 'asc' | 'desc' | null;
 
 export default function JsonTable({ data }: JsonTableProps) {
+  // Prepare data before hooks
+  const dataArray = useMemo(() => {
+    return Array.isArray(data) ? data : data === null || data === undefined ? [] : [data];
+  }, [data]);
+
+  // Extract all unique keys from all objects
+  const columns = useMemo(() => {
+    const keys = new Set<string>();
+    dataArray.forEach((item) => {
+      if (typeof item === 'object' && item !== null) {
+        Object.keys(item).forEach((key) => keys.add(key));
+      }
+    });
+    return Array.from(keys);
+  }, [dataArray]);
+
+  // All hooks must come before any conditional returns
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
-  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(new Set());
+  const [hiddenColumns, setHiddenColumns] = useState<Set<string>>(new Set());
   const [showColumnSettings, setShowColumnSettings] = useState(false);
 
-  // Handle different data types
+  // Calculate visible columns based on all columns and hidden columns
+  const visibleColumns = useMemo(() => {
+    const visible = new Set(columns);
+    hiddenColumns.forEach(col => visible.delete(col));
+    return visible;
+  }, [columns, hiddenColumns]);
+
+  // Now handle conditional returns after all hooks
   if (data === null || data === undefined) {
     return <div className="text-gray-500">No data available</div>;
   }
-
-  // If data is not an array, wrap it in an array
-  const dataArray = Array.isArray(data) ? data : [data];
 
   // If array is empty
   if (dataArray.length === 0) {
     return <div className="text-gray-500">Data is empty</div>;
   }
 
-  // Extract all unique keys from all objects
-  const keys = new Set<string>();
-  dataArray.forEach((item) => {
-    if (typeof item === 'object' && item !== null) {
-      Object.keys(item).forEach((key) => keys.add(key));
-    }
-  });
-
-  const columns = Array.from(keys);
-
-  // Initialize visible columns when columns change
-  useEffect(() => {
-    setVisibleColumns(new Set(columns));
-  }, [columns.join(',')]);
-
   // Toggle column visibility
   const toggleColumn = (column: string) => {
-    setVisibleColumns((prev) => {
+    setHiddenColumns((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(column)) {
         newSet.delete(column);
@@ -57,7 +63,7 @@ export default function JsonTable({ data }: JsonTableProps) {
 
   // Toggle all columns
   const toggleAllColumns = (visible: boolean) => {
-    setVisibleColumns(visible ? new Set(columns) : new Set());
+    setHiddenColumns(visible ? new Set() : new Set(columns));
   };
 
   // Filter columns to only visible ones
@@ -225,7 +231,7 @@ export default function JsonTable({ data }: JsonTableProps) {
                 >
                   <input
                     type="checkbox"
-                    checked={visibleColumns.has(column)}
+                    checked={!hiddenColumns.has(column)}
                     onChange={() => toggleColumn(column)}
                     className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                   />
