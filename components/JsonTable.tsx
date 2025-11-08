@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 interface JsonTableProps {
-  data: any;
+  data: unknown;
 }
 
 type SortDirection = 'asc' | 'desc' | null;
@@ -47,7 +47,7 @@ export default function JsonTable({ data }: JsonTableProps) {
   }
 
   // Render value based on type
-  const renderValue = (value: any): string => {
+  const renderValue = (value: unknown): string => {
     if (value === null) return 'null';
     if (value === undefined) return 'undefined';
     if (typeof value === 'object') return JSON.stringify(value);
@@ -55,9 +55,9 @@ export default function JsonTable({ data }: JsonTableProps) {
   };
 
   // Get raw value for sorting
-  const getRawValue = (item: any, column: string): any => {
+  const getRawValue = (item: unknown, column: string): unknown => {
     if (typeof item === 'object' && item !== null) {
-      return item[column];
+      return (item as Record<string, unknown>)[column];
     }
     return item;
   };

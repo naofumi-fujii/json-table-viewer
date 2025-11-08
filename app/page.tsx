@@ -5,7 +5,7 @@ import JsonTable from '@/components/JsonTable';
 
 export default function Home() {
   const [jsonInput, setJsonInput] = useState('');
-  const [parsedData, setParsedData] = useState<any>(null);
+  const [parsedData, setParsedData] = useState<unknown>(null);
   const [error, setError] = useState('');
   const [leftWidth, setLeftWidth] = useState(50); // Percentage
   const [isDragging, setIsDragging] = useState(false);
@@ -25,7 +25,7 @@ export default function Home() {
       const parsed = JSON.parse(value);
       setParsedData(parsed);
       setError('');
-    } catch (err) {
+    } catch {
       setError('Invalid JSON format');
       setParsedData(null);
     }
