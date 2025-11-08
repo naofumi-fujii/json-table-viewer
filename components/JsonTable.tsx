@@ -62,6 +62,16 @@ export default function JsonTable({ data }: JsonTableProps) {
     return item;
   };
 
+  // Check if a value is numeric (number type or numeric string)
+  const isNumeric = (val: unknown): boolean => {
+    if (typeof val === 'number') return !isNaN(val);
+    if (typeof val === 'string') {
+      const trimmed = val.trim();
+      return trimmed !== '' && !isNaN(Number(trimmed));
+    }
+    return false;
+  };
+
   // Handle column header click for sorting
   const handleSort = (column: string) => {
     if (sortColumn === column) {
@@ -92,8 +102,9 @@ export default function JsonTable({ data }: JsonTableProps) {
 
       // Compare values
       let comparison = 0;
-      if (typeof aVal === 'number' && typeof bVal === 'number') {
-        comparison = aVal - bVal;
+      // Check if both values are numeric (including numeric strings)
+      if (isNumeric(aVal) && isNumeric(bVal)) {
+        comparison = Number(aVal) - Number(bVal);
       } else if (typeof aVal === 'string' && typeof bVal === 'string') {
         comparison = aVal.localeCompare(bVal);
       } else {
