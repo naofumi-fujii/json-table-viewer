@@ -71,7 +71,15 @@ export default function Home() {
         <>
           <div style={{ width: `${leftWidth}%` }} className="p-4 flex-shrink-0">
             <div className="h-full flex flex-col">
-              <h2 className="text-xl font-bold mb-4">JSON入力</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold">JSON入力</h2>
+                <button
+                  onClick={() => setIsInputVisible(false)}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                >
+                  JSON入力を隠す
+                </button>
+              </div>
               <textarea
                 value={jsonInput}
                 onChange={handleJsonChange}
@@ -100,12 +108,14 @@ export default function Home() {
         <div className="h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold">テーブル表示</h2>
-            <button
-              onClick={() => setIsInputVisible(!isInputVisible)}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-            >
-              {isInputVisible ? 'JSON入力を隠す' : 'JSON入力を表示'}
-            </button>
+            {!isInputVisible && (
+              <button
+                onClick={() => setIsInputVisible(true)}
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              >
+                JSON入力を表示
+              </button>
+            )}
           </div>
           {parsedData ? (
             <JsonTable data={parsedData} />
