@@ -46,11 +46,38 @@ export default function JsonTable({ data }: JsonTableProps) {
     );
   }
 
+  // Check if a value is a URL
+  const isURL = (value: unknown): boolean => {
+    if (typeof value !== 'string') return false;
+    try {
+      const url = new URL(value);
+      return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  };
+
   // Render value based on type
-  const renderValue = (value: unknown): string => {
+  const renderValue = (value: unknown): JSX.Element | string => {
     if (value === null) return 'null';
     if (value === undefined) return 'undefined';
     if (typeof value === 'object') return JSON.stringify(value);
+
+    // Check if value is a URL
+    if (isURL(value)) {
+      return (
+        <a
+          href={String(value)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:text-blue-800 underline"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {String(value)}
+        </a>
+      );
+    }
+
     return String(value);
   };
 
