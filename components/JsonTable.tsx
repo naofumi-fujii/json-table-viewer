@@ -199,27 +199,50 @@ export default function JsonTable({ data }: JsonTableProps) {
       <div className="mb-4">
         <button
           onClick={() => setShowColumnSettings(!showColumnSettings)}
-          className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium transition-colors"
+          className="group relative px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+          title={showColumnSettings ? 'Hide column settings' : 'Show column settings'}
         >
-          {showColumnSettings ? 'Hide' : 'Show'} Column Settings
+          <span className="text-lg">☰</span>
+          <span className="text-base">{visibleColumns.size}/{columns.length}</span>
+          <span className="text-xs">{showColumnSettings ? '▲' : '▼'}</span>
+          {/* Tooltip */}
+          <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-800 text-white text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            {showColumnSettings ? 'Hide column settings' : 'Show column settings'}
+            <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></span>
+          </span>
         </button>
 
         {showColumnSettings && (
           <div className="mt-2 p-4 bg-gray-50 border border-gray-300 rounded-lg">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-gray-700">Visible Columns</h3>
-              <div className="space-x-2">
+              <div className="flex items-center gap-2 font-semibold text-gray-700">
+                <span className="text-lg">👁️</span>
+                <span className="text-sm">{visibleColumns.size}/{columns.length}</span>
+              </div>
+              <div className="flex gap-2">
                 <button
                   onClick={() => toggleAllColumns(true)}
-                  className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-sm transition-colors"
+                  className="group relative w-10 h-10 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+                  title="Show all columns"
                 >
-                  Show All
+                  <span className="text-xl">☑</span>
+                  {/* Tooltip */}
+                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-800 text-white text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                    Show all columns
+                    <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></span>
+                  </span>
                 </button>
                 <button
                   onClick={() => toggleAllColumns(false)}
-                  className="px-3 py-1 bg-gray-500 hover:bg-gray-600 text-white rounded text-sm transition-colors"
+                  className="group relative w-10 h-10 flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                  title="Hide all columns"
                 >
-                  Hide All
+                  <span className="text-xl">☐</span>
+                  {/* Tooltip */}
+                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-800 text-white text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                    Hide all columns
+                    <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></span>
+                  </span>
                 </button>
               </div>
             </div>
