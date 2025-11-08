@@ -1,12 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import JsonTable from '@/components/JsonTable';
 
 export default function Home() {
   const [jsonInput, setJsonInput] = useState('');
   const [parsedData, setParsedData] = useState<any>(null);
   const [error, setError] = useState('');
+  const [leftWidth, setLeftWidth] = useState(50); // Percentage
+  const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
@@ -28,10 +31,42 @@ export default function Home() {
     }
   };
 
+  const handleMouseDown = () => {
+    setIsDragging(true);
+  };
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDragging || !containerRef.current) return;
+
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const newLeftWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+
+    // Limit width between 20% and 80%
+    if (newLeftWidth >= 20 && newLeftWidth <= 80) {
+      setLeftWidth(newLeftWidth);
+    }
+  }, [isDragging]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  // Add and remove event listeners
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, handleMouseMove, handleMouseUp]);
+
   return (
-    <div className="flex h-screen">
+    <div ref={containerRef} className="flex h-screen">
       {/* Left side - JSON input */}
-      <div className="w-1/2 p-4 border-r border-gray-300">
+      <div style={{ width: `${leftWidth}%` }} className="p-4 flex-shrink-0">
         <div className="h-full flex flex-col">
           <h2 className="text-xl font-bold mb-4">JSON入力</h2>
           <textarea
@@ -46,8 +81,17 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Resize handle */}
+      <div
+        onMouseDown={handleMouseDown}
+        className={`w-1 bg-gray-300 hover:bg-blue-500 cursor-col-resize flex-shrink-0 ${
+          isDragging ? 'bg-blue-500' : ''
+        }`}
+        style={{ userSelect: 'none' }}
+      />
+
       {/* Right side - Table display */}
-      <div className="w-1/2 p-4 overflow-auto">
+      <div className="flex-1 p-4 overflow-auto">
         <div className="h-full flex flex-col">
           <h2 className="text-xl font-bold mb-4">テーブル表示</h2>
           {parsedData ? (
