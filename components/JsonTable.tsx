@@ -216,7 +216,7 @@ export default function JsonTable({ data }: JsonTableProps) {
           <div className="mt-2 p-4 bg-gray-50 border border-gray-300 rounded-lg">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2 font-semibold text-gray-700">
-                <span className="text-lg">👁️</span>
+                <span className="text-lg">▦</span>
                 <span className="text-sm">{visibleColumns.size}/{columns.length}</span>
               </div>
               <div className="flex gap-2">
