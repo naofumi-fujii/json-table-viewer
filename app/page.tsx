@@ -9,6 +9,7 @@ export default function Home() {
   const [error, setError] = useState('');
   const [leftWidth, setLeftWidth] = useState(50); // Percentage
   const [isDragging, setIsDragging] = useState(false);
+  const [isInputVisible, setIsInputVisible] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -66,39 +67,51 @@ export default function Home() {
   return (
     <div ref={containerRef} className="flex h-screen">
       {/* Left side - JSON input */}
-      <div style={{ width: `${leftWidth}%` }} className="p-4 flex-shrink-0">
-        <div className="h-full flex flex-col">
-          <h2 className="text-xl font-bold mb-4">JSON入力</h2>
-          <textarea
-            value={jsonInput}
-            onChange={handleJsonChange}
-            placeholder='JSONを貼り付けてください&#10;例:&#10;[&#10;  {"name": "太郎", "age": 25, "city": "東京"},&#10;  {"name": "花子", "age": 30, "city": "大阪"}&#10;]'
-            className="flex-1 w-full p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {error && (
-            <div className="mt-2 text-red-600 text-sm">{error}</div>
-          )}
-        </div>
-      </div>
+      {isInputVisible && (
+        <>
+          <div style={{ width: `${leftWidth}%` }} className="p-4 flex-shrink-0">
+            <div className="h-full flex flex-col">
+              <h2 className="text-xl font-bold mb-4">JSON入力</h2>
+              <textarea
+                value={jsonInput}
+                onChange={handleJsonChange}
+                placeholder='JSONを貼り付けてください&#10;例:&#10;[&#10;  {"name": "太郎", "age": 25, "city": "東京"},&#10;  {"name": "花子", "age": 30, "city": "大阪"}&#10;]'
+                className="flex-1 w-full p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {error && (
+                <div className="mt-2 text-red-600 text-sm">{error}</div>
+              )}
+            </div>
+          </div>
 
-      {/* Resize handle */}
-      <div
-        onMouseDown={handleMouseDown}
-        className={`w-1 bg-gray-300 hover:bg-blue-500 cursor-col-resize flex-shrink-0 ${
-          isDragging ? 'bg-blue-500' : ''
-        }`}
-        style={{ userSelect: 'none' }}
-      />
+          {/* Resize handle */}
+          <div
+            onMouseDown={handleMouseDown}
+            className={`w-1 bg-gray-300 hover:bg-blue-500 cursor-col-resize flex-shrink-0 ${
+              isDragging ? 'bg-blue-500' : ''
+            }`}
+            style={{ userSelect: 'none' }}
+          />
+        </>
+      )}
 
       {/* Right side - Table display */}
       <div className="flex-1 p-4 overflow-auto">
         <div className="h-full flex flex-col">
-          <h2 className="text-xl font-bold mb-4">テーブル表示</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold">テーブル表示</h2>
+            <button
+              onClick={() => setIsInputVisible(!isInputVisible)}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            >
+              {isInputVisible ? 'JSON入力を隠す' : 'JSON入力を表示'}
+            </button>
+          </div>
           {parsedData ? (
             <JsonTable data={parsedData} />
           ) : (
             <div className="flex items-center justify-center h-full text-gray-400">
-              左側にJSONを入力すると、ここにテーブルが表示されます
+              {isInputVisible ? '左側にJSONを入力すると、ここにテーブルが表示されます' : 'JSON入力エリアを表示してJSONを入力してください'}
             </div>
           )}
         </div>
