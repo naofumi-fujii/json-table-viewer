@@ -123,7 +123,7 @@ export default function Home() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold">
               Table View
-              {parsedData && (
+              {parsedData !== null && (
                 <span className="ml-3 text-base font-normal text-gray-600">
                   ({Array.isArray(parsedData) ? parsedData.length : 1} {Array.isArray(parsedData) && parsedData.length !== 1 ? 'items' : 'item'})
                 </span>
