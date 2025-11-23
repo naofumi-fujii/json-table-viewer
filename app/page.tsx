@@ -9,7 +9,7 @@ import {
   Text,
   IconButton,
 } from '@chakra-ui/react';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaGithub } from 'react-icons/fa';
 import JsonTable from '@/components/JsonTable';
 
 export default function Home() {
@@ -147,6 +147,18 @@ export default function Home() {
                 </Text>
               )}
             </Heading>
+            <IconButton
+              as="a"
+              href="https://github.com/naofumi-fujii/json-table-viewer"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View on GitHub"
+              colorScheme="gray"
+              variant="ghost"
+              size="lg"
+            >
+              <FaGithub size={24} />
+            </IconButton>
           </Flex>
           {parsedData ? (
             <JsonTable data={parsedData} />
