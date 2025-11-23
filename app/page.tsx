@@ -8,6 +8,7 @@ import {
   Heading,
   Text,
   IconButton,
+  Link,
 } from '@chakra-ui/react';
 import { FaChevronLeft, FaChevronRight, FaGithub } from 'react-icons/fa';
 import JsonTable from '@/components/JsonTable';
@@ -147,18 +148,21 @@ export default function Home() {
                 </Text>
               )}
             </Heading>
-            <IconButton
-              as="a"
+            <Link
               href="https://github.com/naofumi-fujii/json-table-viewer"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="View on GitHub"
-              colorScheme="gray"
-              variant="ghost"
-              size="lg"
+              _hover={{ textDecoration: 'none' }}
             >
-              <FaGithub size={24} />
-            </IconButton>
+              <IconButton
+                aria-label="View on GitHub"
+                colorScheme="gray"
+                variant="ghost"
+                size="lg"
+              >
+                <FaGithub size={24} />
+              </IconButton>
+            </Link>
           </Flex>
           {parsedData ? (
             <JsonTable data={parsedData} />
