@@ -14,11 +14,12 @@ import { FaChevronUp, FaChevronDown, FaCaretUp, FaCaretDown } from 'react-icons/
 
 interface JsonTableProps {
   data: unknown;
+  colorMode?: 'light' | 'dark';
 }
 
 type SortDirection = 'asc' | 'desc' | null;
 
-export default function JsonTable({ data }: JsonTableProps) {
+export default function JsonTable({ data, colorMode = 'light' }: JsonTableProps) {
   // Prepare data before hooks
   const dataArray = useMemo(() => {
     return Array.isArray(data) ? data : data === null || data === undefined ? [] : [data];
@@ -41,6 +42,21 @@ export default function JsonTable({ data }: JsonTableProps) {
   const [hiddenColumns, setHiddenColumns] = useState<Set<string>>(new Set());
   const [showColumnSettings, setShowColumnSettings] = useState(false);
 
+  // Color mode dependent styles
+  const isDark = colorMode === 'dark';
+  const textColor = isDark ? 'gray.100' : 'gray.900';
+  const textMuted = isDark ? 'gray.400' : 'gray.500';
+  const textSecondary = isDark ? 'gray.300' : 'gray.700';
+  const borderColor = isDark ? 'gray.600' : 'gray.300';
+  const bgSubtle = isDark ? 'gray.800' : 'gray.50';
+  const bgHeader = isDark ? 'gray.700' : 'gray.100';
+  const bgHover = isDark ? 'gray.700' : 'gray.100';
+  const bgHoverHeader = isDark ? 'gray.600' : 'gray.200';
+  const bgRowEven = isDark ? 'gray.900' : 'white';
+  const bgRowOdd = isDark ? 'gray.800' : 'gray.50';
+  const linkColor = isDark ? 'blue.400' : 'blue.600';
+  const linkHoverColor = isDark ? 'blue.300' : 'blue.800';
+
   // Calculate visible columns based on all columns and hidden columns
   const visibleColumns = useMemo(() => {
     const visible = new Set(columns);
@@ -50,12 +66,12 @@ export default function JsonTable({ data }: JsonTableProps) {
 
   // Now handle conditional returns after all hooks
   if (data === null || data === undefined) {
-    return <Text color="gray.500">No data available</Text>;
+    return <Text color={textMuted}>No data available</Text>;
   }
 
   // If array is empty
   if (dataArray.length === 0) {
-    return <Text color="gray.500">Data is empty</Text>;
+    return <Text color={textMuted}>Data is empty</Text>;
   }
 
   // Toggle column visibility
@@ -82,8 +98,8 @@ export default function JsonTable({ data }: JsonTableProps) {
   // If no keys found, display raw JSON
   if (columns.length === 0) {
     return (
-      <Box p={4} bg="gray.50" borderRadius="lg">
-        <Text as="pre" fontSize="sm" overflow="auto">
+      <Box p={4} bg={bgSubtle} borderRadius="lg">
+        <Text as="pre" fontSize="sm" overflow="auto" color={textColor}>
           {JSON.stringify(data, null, 2)}
         </Text>
       </Box>
@@ -114,8 +130,8 @@ export default function JsonTable({ data }: JsonTableProps) {
           href={String(value)}
           target="_blank"
           rel="noopener noreferrer"
-          color="blue.600"
-          _hover={{ color: 'blue.800' }}
+          color={linkColor}
+          _hover={{ color: linkHoverColor }}
           textDecoration="underline"
           onClick={(e) => e.stopPropagation()}
         >
@@ -194,7 +210,7 @@ export default function JsonTable({ data }: JsonTableProps) {
   // Render sort indicator
   const renderSortIndicator = (column: string) => {
     if (sortColumn !== column) {
-      return <Text as="span" ml={1} color="gray.400">⇅</Text>;
+      return <Text as="span" ml={1} color={textMuted}>⇅</Text>;
     }
     if (sortDirection === 'asc') {
       return <Icon as={FaCaretUp} ml={1} />;
@@ -226,9 +242,9 @@ export default function JsonTable({ data }: JsonTableProps) {
         </Flex>
 
         {showColumnSettings && (
-          <Box mt={2} p={4} bg="gray.50" border="1px" borderColor="gray.300" borderRadius="lg">
+          <Box mt={2} p={4} bg={bgSubtle} border="1px" borderColor={borderColor} borderRadius="lg">
             <Flex align="center" justify="space-between" mb={3}>
-              <Flex align="center" gap={2} fontWeight="semibold" color="gray.700">
+              <Flex align="center" gap={2} fontWeight="semibold" color={textSecondary}>
                 <Text fontSize="lg">▦</Text>
                 <Text fontSize="sm">{visibleColumns.size}/{columns.length}</Text>
               </Flex>
@@ -260,7 +276,7 @@ export default function JsonTable({ data }: JsonTableProps) {
                 <Box
                   key={column}
                   p={2}
-                  _hover={{ bg: 'gray.100' }}
+                  _hover={{ bg: bgHover }}
                   borderRadius="md"
                   cursor="pointer"
                   onClick={() => toggleColumn(column)}
@@ -272,7 +288,7 @@ export default function JsonTable({ data }: JsonTableProps) {
                       onChange={() => toggleColumn(column)}
                       style={{ cursor: 'pointer' }}
                     />
-                    <Text fontSize="sm" color="gray.700">{column}</Text>
+                    <Text fontSize="sm" color={textSecondary}>{column}</Text>
                   </Flex>
                 </Box>
               ))}
@@ -288,25 +304,25 @@ export default function JsonTable({ data }: JsonTableProps) {
           w="full"
           borderCollapse="collapse"
           border="1px"
-          borderColor="gray.300"
+          borderColor={borderColor}
         >
           <Box as="thead">
-            <Box as="tr" bg="gray.100">
+            <Box as="tr" bg={bgHeader}>
               {displayColumns.map((column) => (
                 <Box
                   as="th"
                   key={column}
                   onClick={() => handleSort(column)}
                   cursor="pointer"
-                  _hover={{ bg: 'gray.200' }}
+                  _hover={{ bg: bgHoverHeader }}
                   userSelect="none"
                   border="1px"
-                  borderColor="gray.300"
+                  borderColor={borderColor}
                   px={4}
                   py={2}
                   textAlign="left"
                   fontWeight="semibold"
-                  color="gray.700"
+                  color={textSecondary}
                 >
                   {column}
                   {renderSortIndicator(column)}
@@ -319,17 +335,17 @@ export default function JsonTable({ data }: JsonTableProps) {
               <Box
                 as="tr"
                 key={rowIndex}
-                bg={rowIndex % 2 === 0 ? 'white' : 'gray.50'}
+                bg={rowIndex % 2 === 0 ? bgRowEven : bgRowOdd}
               >
                 {displayColumns.map((column) => (
                   <Box
                     as="td"
                     key={column}
                     border="1px"
-                    borderColor="gray.300"
+                    borderColor={borderColor}
                     px={4}
                     py={2}
-                    color="gray.900"
+                    color={textColor}
                   >
                     {typeof item === 'object' && item !== null
                       ? renderValue(item[column])

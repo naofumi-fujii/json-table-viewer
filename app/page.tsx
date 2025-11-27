@@ -10,7 +10,7 @@ import {
   IconButton,
   Link,
 } from '@chakra-ui/react';
-import { FaChevronLeft, FaChevronRight, FaGithub } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaGithub, FaMoon, FaSun } from 'react-icons/fa';
 import JsonTable from '@/components/JsonTable';
 
 export default function Home() {
@@ -21,6 +21,24 @@ export default function Home() {
   const [isDragging, setIsDragging] = useState(false);
   const [isInputVisible, setIsInputVisible] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [colorMode, setColorMode] = useState<'light' | 'dark'>('light');
+
+  // Initialize color mode from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('colorMode');
+    if (saved === 'dark' || saved === 'light') {
+      setColorMode(saved);
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      setColorMode('dark');
+    }
+  }, []);
+
+  // Update localStorage when color mode changes
+  const toggleColorMode = () => {
+    const newMode = colorMode === 'light' ? 'dark' : 'light';
+    setColorMode(newMode);
+    localStorage.setItem('colorMode', newMode);
+  };
 
   const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
@@ -74,8 +92,13 @@ export default function Home() {
     }
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
+  const bgColor = colorMode === 'light' ? 'white' : 'gray.900';
+  const borderColor = colorMode === 'light' ? 'gray.300' : 'gray.600';
+  const collapsedBg = colorMode === 'light' ? 'gray.100' : 'gray.800';
+  const textColor = colorMode === 'light' ? 'gray.600' : 'gray.400';
+
   return (
-    <Flex ref={containerRef} h="100vh">
+    <Flex ref={containerRef} h="100vh" bg={bgColor}>
       {/* Left side - JSON input (collapsed to narrow strip when hidden) */}
       <Box
         w={isInputVisible ? `${leftWidth}%` : '2rem'}
@@ -109,7 +132,7 @@ export default function Home() {
             )}
           </Flex>
         ) : (
-          <Flex h="full" align="center" justify="center" bg="gray.100" borderRight="1px" borderColor="gray.300">
+          <Flex h="full" align="center" justify="center" bg={collapsedBg} borderRight="1px" borderColor={borderColor}>
             <IconButton
               onClick={() => setIsInputVisible(true)}
               aria-label="Show JSON input"
@@ -128,7 +151,7 @@ export default function Home() {
         <Box
           onMouseDown={handleMouseDown}
           w="4px"
-          bg={isDragging ? 'blue.500' : 'gray.300'}
+          bg={isDragging ? 'blue.500' : borderColor}
           _hover={{ bg: 'blue.500' }}
           cursor="col-resize"
           flexShrink={0}
@@ -143,31 +166,42 @@ export default function Home() {
             <Heading size="lg">
               Table View
               {parsedData !== null && (
-                <Text as="span" ml={3} fontSize="md" fontWeight="normal" color="gray.600">
+                <Text as="span" ml={3} fontSize="md" fontWeight="normal" color={textColor}>
                   ({Array.isArray(parsedData) ? parsedData.length : 1} {Array.isArray(parsedData) && parsedData.length !== 1 ? 'items' : 'item'})
                 </Text>
               )}
             </Heading>
-            <Link
-              href="https://github.com/naofumi-fujii/json-table-viewer"
-              target="_blank"
-              rel="noopener noreferrer"
-              _hover={{ textDecoration: 'none' }}
-            >
+            <Flex gap={1}>
               <IconButton
-                aria-label="View on GitHub"
+                onClick={toggleColorMode}
+                aria-label={colorMode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
                 colorScheme="gray"
                 variant="ghost"
                 size="lg"
               >
-                <FaGithub size={24} />
+                {colorMode === 'light' ? <FaMoon size={20} /> : <FaSun size={20} />}
               </IconButton>
-            </Link>
+              <Link
+                href="https://github.com/naofumi-fujii/json-table-viewer"
+                target="_blank"
+                rel="noopener noreferrer"
+                _hover={{ textDecoration: 'none' }}
+              >
+                <IconButton
+                  aria-label="View on GitHub"
+                  colorScheme="gray"
+                  variant="ghost"
+                  size="lg"
+                >
+                  <FaGithub size={24} />
+                </IconButton>
+              </Link>
+            </Flex>
           </Flex>
           {parsedData ? (
-            <JsonTable data={parsedData} />
+            <JsonTable data={parsedData} colorMode={colorMode} />
           ) : (
-            <Flex align="center" justify="center" h="full" color="gray.400">
+            <Flex align="center" justify="center" h="full" color={textColor}>
               {isInputVisible ? 'Enter JSON on the left to display the table here' : 'Show the JSON input area and enter JSON'}
             </Flex>
           )}
