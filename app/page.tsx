@@ -14,7 +14,7 @@ import {
 import { FaChevronLeft, FaChevronRight, FaGithub } from 'react-icons/fa';
 import JsonTable from '@/components/JsonTable';
 
-// Sample JSON shown by default so the table view is populated on first visit
+// Sample JSON loaded on demand via the Sample button
 const SAMPLE_JSON = `[
   { "name": "John", "age": 25, "city": "Tokyo", "website": "https://example.com" },
   { "name": "Jane", "age": 30, "city": "Osaka", "website": "https://example.org" },
@@ -22,8 +22,8 @@ const SAMPLE_JSON = `[
 ]`;
 
 export default function Home() {
-  const [jsonInput, setJsonInput] = useState(SAMPLE_JSON);
-  const [parsedData, setParsedData] = useState<unknown>(() => JSON.parse(SAMPLE_JSON));
+  const [jsonInput, setJsonInput] = useState('');
+  const [parsedData, setParsedData] = useState<unknown>(null);
   const [error, setError] = useState('');
   const [leftWidth, setLeftWidth] = useState(25); // Percentage (1:3 ratio)
   const [isDragging, setIsDragging] = useState(false);
