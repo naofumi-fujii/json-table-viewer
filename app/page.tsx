@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import {
   Box,
+  Button,
   Flex,
   Textarea,
   Heading,
@@ -49,6 +50,13 @@ export default function Home() {
     }
   };
 
+  // Clears the JSON input and resets the table to the empty state
+  const handleClear = () => {
+    setJsonInput('');
+    setParsedData(null);
+    setError('');
+  };
+
   const handleMouseDown = () => {
     setIsDragging(true);
   };
@@ -93,15 +101,27 @@ export default function Home() {
           <Flex h="full" p={4} direction="column">
             <Flex align="center" justify="space-between" mb={4}>
               <Heading size="lg">JSON Input</Heading>
-              <IconButton
-                onClick={() => setIsInputVisible(false)}
-                aria-label="Hide JSON input"
-                colorPalette="blue"
-                variant="subtle"
-                size="md"
-              >
-                <FaChevronLeft />
-              </IconButton>
+              <Flex align="center" gap={2}>
+                <Button
+                  onClick={handleClear}
+                  aria-label="Clear JSON input"
+                  colorPalette="gray"
+                  variant="subtle"
+                  size="md"
+                  disabled={!jsonInput}
+                >
+                  Clear
+                </Button>
+                <IconButton
+                  onClick={() => setIsInputVisible(false)}
+                  aria-label="Hide JSON input"
+                  colorPalette="blue"
+                  variant="subtle"
+                  size="md"
+                >
+                  <FaChevronLeft />
+                </IconButton>
+              </Flex>
             </Flex>
             <Textarea
               value={jsonInput}
