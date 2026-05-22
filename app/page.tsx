@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import {
   Box,
+  Button,
   Flex,
   Textarea,
   Heading,
@@ -12,6 +13,13 @@ import {
 } from '@chakra-ui/react';
 import { FaChevronLeft, FaChevronRight, FaGithub } from 'react-icons/fa';
 import JsonTable from '@/components/JsonTable';
+
+// Sample JSON loaded on demand via the Sample button
+const SAMPLE_JSON = `[
+  { "name": "John", "age": 25, "city": "Tokyo", "website": "https://example.com" },
+  { "name": "Jane", "age": 30, "city": "Osaka", "website": "https://example.org" },
+  { "name": "Bob", "age": 28, "city": "Kyoto", "website": "https://example.net" }
+]`;
 
 export default function Home() {
   const [jsonInput, setJsonInput] = useState('');
@@ -40,6 +48,20 @@ export default function Home() {
       setError('Invalid JSON format');
       setParsedData(null);
     }
+  };
+
+  // Loads the sample JSON into the input and table
+  const handleLoadSample = () => {
+    setJsonInput(SAMPLE_JSON);
+    setParsedData(JSON.parse(SAMPLE_JSON));
+    setError('');
+  };
+
+  // Clears the JSON input and resets the table to the empty state
+  const handleClear = () => {
+    setJsonInput('');
+    setParsedData(null);
+    setError('');
   };
 
   const handleMouseDown = () => {
@@ -86,15 +108,36 @@ export default function Home() {
           <Flex h="full" p={4} direction="column">
             <Flex align="center" justify="space-between" mb={4}>
               <Heading size="lg">JSON Input</Heading>
-              <IconButton
-                onClick={() => setIsInputVisible(false)}
-                aria-label="Hide JSON input"
-                colorPalette="blue"
-                variant="subtle"
-                size="md"
-              >
-                <FaChevronLeft />
-              </IconButton>
+              <Flex align="center" gap={2}>
+                <Button
+                  onClick={handleLoadSample}
+                  aria-label="Load sample JSON"
+                  colorPalette="blue"
+                  variant="subtle"
+                  size="md"
+                >
+                  Sample
+                </Button>
+                <Button
+                  onClick={handleClear}
+                  aria-label="Clear JSON input"
+                  colorPalette="gray"
+                  variant="subtle"
+                  size="md"
+                  disabled={!jsonInput}
+                >
+                  Clear
+                </Button>
+                <IconButton
+                  onClick={() => setIsInputVisible(false)}
+                  aria-label="Hide JSON input"
+                  colorPalette="blue"
+                  variant="subtle"
+                  size="md"
+                >
+                  <FaChevronLeft />
+                </IconButton>
+              </Flex>
             </Flex>
             <Textarea
               value={jsonInput}
