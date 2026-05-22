@@ -50,12 +50,12 @@ export default function JsonTable({ data }: JsonTableProps) {
 
   // Now handle conditional returns after all hooks
   if (data === null || data === undefined) {
-    return <Text color="gray.500">No data available</Text>;
+    return <Text color="fg.muted">No data available</Text>;
   }
 
   // If array is empty
   if (dataArray.length === 0) {
-    return <Text color="gray.500">Data is empty</Text>;
+    return <Text color="fg.muted">Data is empty</Text>;
   }
 
   // Toggle column visibility
@@ -82,7 +82,7 @@ export default function JsonTable({ data }: JsonTableProps) {
   // If no keys found, display raw JSON
   if (columns.length === 0) {
     return (
-      <Box p={4} bg="gray.50" borderRadius="lg">
+      <Box p={4} bg="bg.panel" borderRadius="lg">
         <Text as="pre" fontSize="sm" overflow="auto">
           {JSON.stringify(data, null, 2)}
         </Text>
@@ -114,8 +114,8 @@ export default function JsonTable({ data }: JsonTableProps) {
           href={String(value)}
           target="_blank"
           rel="noopener noreferrer"
-          color="blue.600"
-          _hover={{ color: 'blue.800' }}
+          color="blue.fg"
+          _hover={{ color: 'blue.solid' }}
           textDecoration="underline"
           onClick={(e) => e.stopPropagation()}
         >
@@ -194,7 +194,7 @@ export default function JsonTable({ data }: JsonTableProps) {
   // Render sort indicator
   const renderSortIndicator = (column: string) => {
     if (sortColumn !== column) {
-      return <Text as="span" ml={1} color="gray.400">⇅</Text>;
+      return <Text as="span" ml={1} color="fg.subtle">⇅</Text>;
     }
     if (sortDirection === 'asc') {
       return <Icon as={FaCaretUp} ml={1} />;
@@ -212,7 +212,8 @@ export default function JsonTable({ data }: JsonTableProps) {
         <Flex gap={2} align="center">
           <Button
             onClick={() => setShowColumnSettings(!showColumnSettings)}
-            colorScheme="gray"
+            colorPalette="gray"
+            variant="subtle"
             size="sm"
             fontWeight="medium"
             title={showColumnSettings ? 'Hide column settings' : 'Show column settings'}
@@ -226,16 +227,17 @@ export default function JsonTable({ data }: JsonTableProps) {
         </Flex>
 
         {showColumnSettings && (
-          <Box mt={2} p={4} bg="gray.50" border="1px" borderColor="gray.300" borderRadius="lg">
+          <Box mt={2} p={4} bg="bg.panel" border="1px" borderColor="border" borderRadius="lg">
             <Flex align="center" justify="space-between" mb={3}>
-              <Flex align="center" gap={2} fontWeight="semibold" color="gray.700">
+              <Flex align="center" gap={2} fontWeight="semibold" color="fg.muted">
                 <Text fontSize="lg">▦</Text>
                 <Text fontSize="sm">{visibleColumns.size}/{columns.length}</Text>
               </Flex>
               <Flex gap={2}>
                 <Button
                   onClick={() => toggleAllColumns(true)}
-                  colorScheme="blue"
+                  colorPalette="blue"
+                  variant="subtle"
                   size="sm"
                   w={10}
                   h={10}
@@ -245,7 +247,8 @@ export default function JsonTable({ data }: JsonTableProps) {
                 </Button>
                 <Button
                   onClick={() => toggleAllColumns(false)}
-                  colorScheme="gray"
+                  colorPalette="gray"
+                  variant="subtle"
                   size="sm"
                   w={10}
                   h={10}
@@ -260,7 +263,7 @@ export default function JsonTable({ data }: JsonTableProps) {
                 <Box
                   key={column}
                   p={2}
-                  _hover={{ bg: 'gray.100' }}
+                  _hover={{ bg: 'bg.muted' }}
                   borderRadius="md"
                   cursor="pointer"
                   onClick={() => toggleColumn(column)}
@@ -272,7 +275,7 @@ export default function JsonTable({ data }: JsonTableProps) {
                       onChange={() => toggleColumn(column)}
                       style={{ cursor: 'pointer' }}
                     />
-                    <Text fontSize="sm" color="gray.700">{column}</Text>
+                    <Text fontSize="sm" color="fg.muted">{column}</Text>
                   </Flex>
                 </Box>
               ))}
@@ -288,25 +291,25 @@ export default function JsonTable({ data }: JsonTableProps) {
           w="full"
           borderCollapse="collapse"
           border="1px"
-          borderColor="gray.300"
+          borderColor="border"
         >
           <Box as="thead">
-            <Box as="tr" bg="gray.100">
+            <Box as="tr" bg="bg.muted">
               {displayColumns.map((column) => (
                 <Box
                   as="th"
                   key={column}
                   onClick={() => handleSort(column)}
                   cursor="pointer"
-                  _hover={{ bg: 'gray.200' }}
+                  _hover={{ bg: 'bg.emphasized' }}
                   userSelect="none"
                   border="1px"
-                  borderColor="gray.300"
+                  borderColor="border"
                   px={4}
                   py={2}
                   textAlign="left"
                   fontWeight="semibold"
-                  color="gray.700"
+                  color="fg"
                 >
                   {column}
                   {renderSortIndicator(column)}
@@ -319,17 +322,17 @@ export default function JsonTable({ data }: JsonTableProps) {
               <Box
                 as="tr"
                 key={rowIndex}
-                bg={rowIndex % 2 === 0 ? 'white' : 'gray.50'}
+                bg={rowIndex % 2 === 0 ? 'bg.panel' : 'bg.subtle'}
               >
                 {displayColumns.map((column) => (
                   <Box
                     as="td"
                     key={column}
                     border="1px"
-                    borderColor="gray.300"
+                    borderColor="border"
                     px={4}
                     py={2}
-                    color="gray.900"
+                    color="fg"
                   >
                     {typeof item === 'object' && item !== null
                       ? renderValue(item[column])
