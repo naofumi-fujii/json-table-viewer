@@ -50,6 +50,13 @@ export default function Home() {
     }
   };
 
+  // Loads the sample JSON into the input and table
+  const handleLoadSample = () => {
+    setJsonInput(SAMPLE_JSON);
+    setParsedData(JSON.parse(SAMPLE_JSON));
+    setError('');
+  };
+
   // Clears the JSON input and resets the table to the empty state
   const handleClear = () => {
     setJsonInput('');
@@ -102,6 +109,15 @@ export default function Home() {
             <Flex align="center" justify="space-between" mb={4}>
               <Heading size="lg">JSON Input</Heading>
               <Flex align="center" gap={2}>
+                <Button
+                  onClick={handleLoadSample}
+                  aria-label="Load sample JSON"
+                  colorPalette="blue"
+                  variant="subtle"
+                  size="md"
+                >
+                  Sample
+                </Button>
                 <Button
                   onClick={handleClear}
                   aria-label="Clear JSON input"
