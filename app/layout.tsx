@@ -12,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja">
+    <html lang="ja" className="dark" style={{ colorScheme: 'dark' }}>
       <body>
         <Providers>{children}</Providers>
       </body>

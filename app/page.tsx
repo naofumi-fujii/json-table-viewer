@@ -75,7 +75,7 @@ export default function Home() {
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
   return (
-    <Flex ref={containerRef} h="100vh">
+    <Flex ref={containerRef} h="100vh" bg="bg">
       {/* Left side - JSON input (collapsed to narrow strip when hidden) */}
       <Box
         w={isInputVisible ? `${leftWidth}%` : '2rem'}
@@ -89,7 +89,8 @@ export default function Home() {
               <IconButton
                 onClick={() => setIsInputVisible(false)}
                 aria-label="Hide JSON input"
-                colorScheme="blue"
+                colorPalette="blue"
+                variant="subtle"
                 size="md"
               >
                 <FaChevronLeft />
@@ -103,17 +104,19 @@ export default function Home() {
               fontFamily="mono"
               fontSize="sm"
               resize="none"
+              bg="bg.subtle"
             />
             {error && (
-              <Text mt={2} color="red.600" fontSize="sm">{error}</Text>
+              <Text mt={2} color="fg.error" fontSize="sm">{error}</Text>
             )}
           </Flex>
         ) : (
-          <Flex h="full" align="center" justify="center" bg="gray.100" borderRight="1px" borderColor="gray.300">
+          <Flex h="full" align="center" justify="center" bg="bg.muted" borderRight="1px" borderColor="border">
             <IconButton
               onClick={() => setIsInputVisible(true)}
               aria-label="Show JSON input"
-              colorScheme="blue"
+              colorPalette="blue"
+              variant="subtle"
               size="md"
               h={16}
             >
@@ -128,8 +131,8 @@ export default function Home() {
         <Box
           onMouseDown={handleMouseDown}
           w="4px"
-          bg={isDragging ? 'blue.500' : 'gray.300'}
-          _hover={{ bg: 'blue.500' }}
+          bg={isDragging ? 'blue.solid' : 'border'}
+          _hover={{ bg: 'blue.solid' }}
           cursor="col-resize"
           flexShrink={0}
           userSelect="none"
@@ -143,7 +146,7 @@ export default function Home() {
             <Heading size="lg">
               Table View
               {parsedData !== null && (
-                <Text as="span" ml={3} fontSize="md" fontWeight="normal" color="gray.600">
+                <Text as="span" ml={3} fontSize="md" fontWeight="normal" color="fg.muted">
                   ({Array.isArray(parsedData) ? parsedData.length : 1} {Array.isArray(parsedData) && parsedData.length !== 1 ? 'items' : 'item'})
                 </Text>
               )}
@@ -156,7 +159,7 @@ export default function Home() {
             >
               <IconButton
                 aria-label="View on GitHub"
-                colorScheme="gray"
+                colorPalette="gray"
                 variant="ghost"
                 size="lg"
               >
@@ -167,7 +170,7 @@ export default function Home() {
           {parsedData ? (
             <JsonTable data={parsedData} />
           ) : (
-            <Flex align="center" justify="center" h="full" color="gray.400">
+            <Flex align="center" justify="center" h="full" color="fg.subtle">
               {isInputVisible ? 'Enter JSON on the left to display the table here' : 'Show the JSON input area and enter JSON'}
             </Flex>
           )}
