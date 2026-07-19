@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Flex,
+  Input,
   Textarea,
   Heading,
   Text,
@@ -25,6 +26,8 @@ export default function Home() {
   const [jsonInput, setJsonInput] = useState('');
   const [parsedData, setParsedData] = useState<unknown>(null);
   const [error, setError] = useState('');
+  const [urlInput, setUrlInput] = useState('');
+  const [isFetchingUrl, setIsFetchingUrl] = useState(false);
   const [leftWidth, setLeftWidth] = useState(25); // Percentage (1:3 ratio)
   const [isDragging, setIsDragging] = useState(false);
   const [isInputVisible, setIsInputVisible] = useState(true);
@@ -55,6 +58,35 @@ export default function Home() {
     setJsonInput(SAMPLE_JSON);
     setParsedData(JSON.parse(SAMPLE_JSON));
     setError('');
+  };
+
+  // Fetches JSON from the URL entered in the URL input field,
+  // then reflects it into the textarea and the table
+  const handleLoadFromUrl = async () => {
+    const url = urlInput.trim();
+    if (!url) return;
+
+    setIsFetchingUrl(true);
+    setError('');
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      const text = await response.text();
+      const parsed = JSON.parse(text);
+      setJsonInput(JSON.stringify(parsed, null, 2));
+      setParsedData(parsed);
+    } catch (e) {
+      if (e instanceof SyntaxError) {
+        setError('Fetched content is not valid JSON');
+      } else {
+        setError(`Failed to fetch from URL (${e instanceof Error ? e.message : 'unknown error'})`);
+      }
+      setParsedData(null);
+    } finally {
+      setIsFetchingUrl(false);
+    }
   };
 
   // Clears the JSON input and resets the table to the empty state
@@ -138,6 +170,29 @@ export default function Home() {
                   <FaChevronLeft />
                 </IconButton>
               </Flex>
+            </Flex>
+            <Flex gap={2} mb={4}>
+              <Input
+                value={urlInput}
+                onChange={(e) => setUrlInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleLoadFromUrl();
+                }}
+                placeholder="https://example.com/data.json"
+                size="md"
+                bg="bg.subtle"
+              />
+              <Button
+                onClick={handleLoadFromUrl}
+                aria-label="Load JSON from URL"
+                colorPalette="blue"
+                variant="subtle"
+                size="md"
+                loading={isFetchingUrl}
+                disabled={!urlInput.trim()}
+              >
+                Load
+              </Button>
             </Flex>
             <Textarea
               value={jsonInput}
