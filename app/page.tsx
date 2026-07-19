@@ -14,6 +14,7 @@ import {
 } from '@chakra-ui/react';
 import { FaChevronLeft, FaChevronRight, FaGithub } from 'react-icons/fa';
 import JsonTable from '@/components/JsonTable';
+import ThemeToggleButton from '@/components/ThemeToggleButton';
 
 // Sample JSON loaded on demand via the Sample button
 const SAMPLE_JSON = `[
@@ -249,21 +250,24 @@ export default function Home() {
                 </Text>
               )}
             </Heading>
-            <Link
-              href="https://github.com/naofumi-fujii/json-table-viewer"
-              target="_blank"
-              rel="noopener noreferrer"
-              _hover={{ textDecoration: 'none' }}
-            >
-              <IconButton
-                aria-label="View on GitHub"
-                colorPalette="gray"
-                variant="ghost"
-                size="lg"
+            <Flex align="center" gap={1}>
+              <ThemeToggleButton />
+              <Link
+                href="https://github.com/naofumi-fujii/json-table-viewer"
+                target="_blank"
+                rel="noopener noreferrer"
+                _hover={{ textDecoration: 'none' }}
               >
-                <FaGithub size={24} />
-              </IconButton>
-            </Link>
+                <IconButton
+                  aria-label="View on GitHub"
+                  colorPalette="gray"
+                  variant="ghost"
+                  size="lg"
+                >
+                  <FaGithub size={24} />
+                </IconButton>
+              </Link>
+            </Flex>
           </Flex>
           {parsedData ? (
             <JsonTable data={parsedData} />
