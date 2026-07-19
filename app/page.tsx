@@ -90,11 +90,12 @@ export default function Home() {
     }
   };
 
-  // Clears the JSON input and resets the table to the empty state
+  // Resets the whole input state (JSON input, URL input, error) to the initial empty state
   const handleClear = () => {
     setJsonInput('');
     setParsedData(null);
     setError('');
+    setUrlInput('');
   };
 
   const handleMouseDown = () => {
@@ -153,13 +154,13 @@ export default function Home() {
                 </Button>
                 <Button
                   onClick={handleClear}
-                  aria-label="Clear JSON input"
+                  aria-label="Reset all inputs"
                   colorPalette="gray"
                   variant="subtle"
                   size="md"
-                  disabled={!jsonInput}
+                  disabled={!jsonInput && !urlInput}
                 >
-                  Clear
+                  Reset
                 </Button>
                 <IconButton
                   onClick={() => setIsInputVisible(false)}
